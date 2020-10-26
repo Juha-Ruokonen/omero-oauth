@@ -38,5 +38,8 @@
     <input id="test" type="submit" class="button" name="{{ name }}" value="Login with {{ displayname }}" />
     {% endfor %}
   </form>
+  <a href="{% url 'weblogin' %}">
+    <span class="button">Log in with username and password</span>
+  </a>
 </div>
 {% endblock %}
