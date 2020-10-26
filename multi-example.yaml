@@ -97,6 +97,7 @@ providers:
 
   ######################################################################
   # Synapse
+  # https://docs.synapse.org/articles/using_synapse_as_an_oauth_server.html
   - name: synapse
     displayname: Synapse
     url:
@@ -105,6 +106,7 @@ providers:
     client:
       id: CLIENT_ID
       secret: SECRET_ID
+      # only allowed scope for synapse is openid
       scopes:
         - openid
 
@@ -113,13 +115,15 @@ providers:
 
     authorization:
       params:
-        claims: "{\"id_token\": { \"user_name\": null, \"email\": null, \"given_name\": null, \"family_name\": null } }"
+        # Only the specified teams are allowed to log in
+        claims: "{\"id_token\": { \"user_name\": null, \"email\": null, \"given_name\": null, \"family_name\": null, \"team\": {\"values\": [\"3410871\"] } } }"
 
     userinfo:
       type: synapse
 
     user:
       # OMERO user name
+      # TODO changing the template values below doesn't have effect right now
       name: '{user_name}'
       email: '{email}'
       firstname: '{given_name}'
