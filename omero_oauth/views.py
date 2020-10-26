@@ -44,14 +44,15 @@ USERAGENT = 'OMERO.oauth'
 
 class OauthLoginView(WebclientLoginView):
 
-    def handle_not_logged_in(self, request):
+    def handle_not_logged_in(self, request, error_message=None):
         auth_providers = providers()
         context = {
             'version': omero_version,
             'build_year': build_year,
             'auth_providers': auth_providers,
             'client_name': oauth_settings.OAUTH_DISPLAY_NAME,
-            'url_suffix': ''
+            'url_suffix': '',
+            'error_message': error_message
         }
         if hasattr(settings, 'LOGIN_LOGO'):
             context['LOGIN_LOGO'] = settings.LOGIN_LOGO
@@ -86,15 +87,18 @@ class OauthCallbackView(WebclientLoginView):
         if not code:
             raise PermissionDenied('OAuth code missing')
 
-        oauth = OauthProvider(name, state=state)
-        token = oauth.token(code)
-        logger.debug('Got OAuth token %s', token)
+        try:
+            oauth = OauthProvider(name, state=state)
+            token = oauth.token(code)
+            logger.debug('Got OAuth token %s', token)
 
-        userinfo = oauth.get_userinfo(token)
-        logger.debug('Got userinfo %s', userinfo)
+            userinfo = oauth.get_userinfo(token)
+            logger.debug('Got userinfo %s', userinfo)
 
-        uid, session = self.get_or_create_account_and_session(userinfo)
-        return self.login_with_session(request, session)
+            uid, session = self.get_or_create_account_and_session(userinfo)
+            return self.login_with_session(request, session)
+        except PermissionDenied:
+            return error(request, error_message="Login failed")
 
     def login_with_session(self, request, session):
         # Based on
@@ -210,6 +214,15 @@ def create_session_for_user(adminc, omename):
     logger.debug('Created new session: %s %s', omename, user_session)
     return user_session
 
+
+@render_response()
+def error(request, **kwargs):
+    context = {
+        'error_message': kwargs['error_message']
+    }
+    t = template_loader.get_template('oauth/error.html')
+    rsp = t.render(context, request=request)
+    return HttpResponse(rsp)
 
 @login_required()
 @render_response()

@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^confirm$', views.confirm, name="oauth_confirm"),
 
     url(r'^sessiontoken$', views.sessiontoken, name="oauth_sessiontoken"),
+    url(r'^error$', views.error, name="oauth_error"),
 ]
