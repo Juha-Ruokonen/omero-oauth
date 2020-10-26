@@ -130,16 +130,14 @@ class OauthProvider(object):
     def userinfo_synapse(self, token, userinfo_url):
         decoded = jwt_token_noverify(token['id_token'])
 
-        try:
-            omename = decoded["user_name"]
-            email = decoded.get("email")
-            firstname = decoded.get("given_name", "")
-            lastname = decoded.get("family_name", "")
-            team = decoded.get("team")
-            if len(team) == 0:
-                raise PermissionDenied('Synapse team not found. ' + str(decoded))
-        except Exception:
-            raise ValueError(decoded)
+        omename = decoded["user_name"]
+        email = decoded.get("email")
+        firstname = decoded.get("given_name", "")
+        lastname = decoded.get("family_name", "")
+        team = decoded.get("team")
+        if len(team) == 0:
+            raise PermissionDenied('Synapse team not found. ' + str(decoded))
+
         return omename, email, firstname, lastname
 
     def userinfo_github(self, token, userinfo_url):
