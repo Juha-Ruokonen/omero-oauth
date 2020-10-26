@@ -136,7 +136,7 @@ class OauthProvider(object):
             firstname = decoded.get("given_name", "")
             lastname = decoded.get("family_name", "")
             team = decoded.get("team")
-            if len(team.get("values")) == 0:
+            if len(team) == 0:
                 raise PermissionDenied('Synapse team not found. ' + str(decoded))
         except Exception:
             raise ValueError(decoded)
