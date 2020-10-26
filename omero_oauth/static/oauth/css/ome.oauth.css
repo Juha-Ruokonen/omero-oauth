@@ -26,6 +26,11 @@
 	margin: 10em auto;
 	color: #333;
 	padding: 2em;
+	text-align: center;
+}
+
+#oauth a {
+    font-size: small;
 }
 
 .oauth-details {
