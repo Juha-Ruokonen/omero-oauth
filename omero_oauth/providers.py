@@ -28,7 +28,7 @@ def providers():
             ps.append((cfg['name'], cfg['name']))
     return ps
 
-class OauthException:
+class OauthException(Exception):
     def __init__(self, message):
         self.message = message
 
