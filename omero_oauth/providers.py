@@ -4,6 +4,7 @@
 import logging
 
 from requests_oauthlib import OAuth2Session
+from django.core.exceptions import PermissionDenied
 
 from . import oauth_settings
 from .openid import (
@@ -134,6 +135,9 @@ class OauthProvider(object):
             email = decoded.get("email")
             firstname = decoded.get("given_name", "")
             lastname = decoded.get("family_name", "")
+            team = decoded.get("team")
+            if len(team.get("values")) == 0:
+                raise PermissionDenied('Synapse team not found. ' + str(decoded))
         except Exception:
             raise ValueError(decoded)
         return omename, email, firstname, lastname
