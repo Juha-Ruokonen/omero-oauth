@@ -28,6 +28,9 @@ def providers():
             ps.append((cfg['name'], cfg['name']))
     return ps
 
+class OauthException:
+    def __init__(self, message):
+        self.message = message
 
 class OauthProvider(object):
 
@@ -136,7 +139,7 @@ class OauthProvider(object):
         lastname = decoded.get("family_name", "")
         team = decoded.get("team")
         if len(team) == 0:
-            raise PermissionDenied('Synapse team not found. ' + str(decoded))
+            raise OauthException('Required team not found, request membership from your Synapse team manager.')
 
         return omename, email, firstname, lastname
 

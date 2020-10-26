@@ -34,7 +34,7 @@ from . import oauth_settings
 from .providers import (
     OauthProvider,
     providers,
-)
+    OauthException)
 
 
 logger = logging.getLogger(__name__)
@@ -97,8 +97,8 @@ class OauthCallbackView(WebclientLoginView):
 
             uid, session = self.get_or_create_account_and_session(userinfo)
             return self.login_with_session(request, session)
-        except PermissionDenied:
-            return error(request, error_message="Login failed")
+        except OauthException as e:
+            return error(request, error_message=e.message)
 
     def login_with_session(self, request, session):
         # Based on
